@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/rpc"
 	"os"
+	"sync"
 	"time"
 )
 
@@ -39,6 +40,7 @@ type mapTaskMasterInProgressData struct {
 }
 
 type mapTaskMaster struct {
+	mu             sync.Mutex
 	runNum         int
 	taskInfoData   []mapTaskMasterInfoData
 	inProgressTask []mapTaskMasterInProgressData
@@ -56,6 +58,7 @@ type reduceTaskMasterInProgressData struct {
 }
 
 type reduceTaskMaster struct {
+	mu             sync.Mutex
 	runNum         int
 	taskInfoData   []reduceTaskMasterInfoData
 	inProgressTask []reduceTaskMasterInProgressData
@@ -87,6 +90,10 @@ func (m *reduceTaskMaster) hasTaskStatus(taskStatus TaskStatusEnum) (int, bool) 
 }
 
 func (m *Master) AssignTask(args *AssignTaskArgs, reply *AssignTaskReply) error {
+	m.mapTask.mu.Lock()
+	m.reduceTask.mu.Lock()
+	defer m.mapTask.mu.Unlock()
+	defer m.reduceTask.mu.Unlock()
 	if idx, isExist := m.mapTask.hasTaskStatus(idleTaskStatusEnum); isExist {
 		reply.TaskType = mapTaskTypeEnum
 		reply.MapTask = MapTaskReply{
@@ -128,6 +135,8 @@ func (m *Master) AssignTask(args *AssignTaskArgs, reply *AssignTaskReply) error 
 }
 
 func (m *Master) FinishMapTask(args *FinishMapTaskArgs, reply *FinishMapTaskReply) error {
+	m.mapTask.mu.Lock()
+	defer m.mapTask.mu.Unlock()
 	if len(args.IntermediateFileNames) != m.nReduce {
 		log.Printf("Incorrect IntermediateFileName slice size: %v\n", len(args.IntermediateFileNames))
 		return errors.New("incorrect IntermediateFileName slice size")
@@ -171,6 +180,8 @@ func (m *Master) FinishMapTask(args *FinishMapTaskArgs, reply *FinishMapTaskRepl
 }
 
 func (m *Master) FinishReduceTask(args *FinishReduceTaskArgs, reply *FinishReduceTaskReply) error {
+	m.reduceTask.mu.Lock()
+	defer m.reduceTask.mu.Unlock()
 	// Find taskID with runID in inProgressTask
 	var taskID int
 	for _, task := range m.reduceTask.inProgressTask {
@@ -221,6 +232,10 @@ func (m *Master) server() {
 // main/mrmaster.go calls Done() periodically to find out
 // if the entire job has finished.
 func (m *Master) Done() bool {
+	m.mapTask.mu.Lock()
+	m.reduceTask.mu.Lock()
+	defer m.mapTask.mu.Unlock()
+	defer m.reduceTask.mu.Unlock()
 	for i, task := range m.mapTask.taskInfoData {
 		if task.status == inProgressTaskStatusEnum && int(time.Since(task.recentRunTime).Seconds()) > backUpDurationSec {
 			m.mapTask.taskInfoData[i].status = idleTaskStatusEnum
