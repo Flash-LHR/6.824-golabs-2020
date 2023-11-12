@@ -16,12 +16,42 @@ import (
 // and reply for an RPC.
 //
 
-type ExampleArgs struct {
-	X int
+type MapTaskReply struct {
+	NReduce       int
+	RunID         int
+	InputFileName string
 }
 
-type ExampleReply struct {
-	Y int
+type ReduceTaskReply struct {
+	NMap           int
+	RunID          int
+	TaskID         int
+	InputFileNames []string
+}
+
+type AssignTaskArgs struct {
+}
+
+type AssignTaskReply struct {
+	TaskType   TaskTypeEnum
+	MapTask    MapTaskReply
+	ReduceTask ReduceTaskReply
+}
+
+type FinishMapTaskArgs struct {
+	RunID                 int
+	IntermediateFileNames []string
+}
+
+type FinishMapTaskReply struct {
+}
+
+type FinishReduceTaskArgs struct {
+	RunID          int
+	outputFileName string
+}
+
+type FinishReduceTaskReply struct {
 }
 
 // Add your RPC definitions here.
