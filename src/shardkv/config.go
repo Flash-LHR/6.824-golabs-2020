@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
-	"../labrpc"
-	"../shardmaster"
+	"6.824/labrpc"
+	"6.824/shardmaster"
 
 	// import "log"
 	crand "crypto/rand"
@@ -18,7 +18,7 @@ import (
 	"sync"
 	"time"
 
-	"../raft"
+	"6.824/raft"
 )
 
 func randstring(n int) string {

@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"../models"
-	"../porcupine"
+	"6.824/models"
+	"6.824/porcupine"
 )
 
 const linearizabilityCheckTimeout = 1 * time.Second

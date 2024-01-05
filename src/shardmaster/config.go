@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
-	"../labrpc"
-	"../raft"
+	"6.824/labrpc"
+	"6.824/raft"
 
 	// import "log"
 	crand "crypto/rand"

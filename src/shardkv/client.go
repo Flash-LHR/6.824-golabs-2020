@@ -13,8 +13,8 @@ import (
 	"math/big"
 	"time"
 
-	"../labrpc"
-	"../shardmaster"
+	"6.824/labrpc"
+	"6.824/shardmaster"
 )
 
 // which shard is a key in?

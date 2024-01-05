@@ -12,8 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"../models"
-	"../porcupine"
+	"6.824/models"
+	"6.824/porcupine"
 )
 
 // The tester generously allows solutions to complete elections in one second

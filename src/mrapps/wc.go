@@ -11,7 +11,7 @@ import (
 	"strings"
 	"unicode"
 
-	"../mr"
+	"6.824/mr"
 )
 
 // The map function is called once for each file of input. The first

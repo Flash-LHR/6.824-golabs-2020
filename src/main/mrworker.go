@@ -16,7 +16,7 @@ import (
 	"os"
 	"plugin"
 
-	"../mr"
+	"6.824/mr"
 )
 
 func main() {

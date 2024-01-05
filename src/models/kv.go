@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"../porcupine"
+	"6.824/porcupine"
 )
 
 type KvInput struct {
